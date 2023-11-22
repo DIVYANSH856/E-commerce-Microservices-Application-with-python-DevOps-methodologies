@@ -1,0 +1,198 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - name: auth
+        image: jatin1008/auth_api:0.1
+        volumeMounts:
+          - name: shared-storage
+            mountPath : '/python-api/instance'
+        ports:
+        - containerPort: 5000
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-pvc
+      
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth
+  ports:
+  - protocol: TCP 
+    port: 80
+    targetPort: 5000
+  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+spec:
+  selector:
+    matchLabels:
+      app: cart
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+      - name: cart
+        image: jatin1008/cart_api:0.1
+        volumeMounts:
+          - name: shared-storage
+            mountPath : '/python-api/instance'
+        ports:
+        - containerPort: 5000
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-pvc
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart-service
+spec:
+  selector:
+    app: cart
+  ports:
+  - protocol: TCP 
+    port: 80
+    targetPort: 5000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product
+spec:
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+      - name: product
+        image: jatin1008/product_api:0.1
+        volumeMounts:
+          - name: shared-storage
+            mountPath : '/pyhton-api/instance'
+        ports:
+        - containerPort: 5000
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-pvc
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product
+  ports:
+  - protocol: TCP 
+    port: 80
+    targetPort: 5000
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image
+spec:
+  selector:
+    matchLabels:
+      app: image
+  template:
+    metadata:
+      labels:
+        app: image
+    spec:
+      containers:
+      - name: image
+        image: jatin1008/image_api:0.1
+        volumeMounts:
+          - name: shared-storage
+            mountPath : '/python-api/instance'
+        ports:
+        - containerPort: 5000
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: shared-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-service
+spec:
+  selector:
+    app: image
+  ports:
+  - protocol: TCP 
+    port: 80
+    targetPort: 5000
+  
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client
+spec:
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: client
+        image: jatin1008/ecom-client
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API
+          value: "http://localhost/"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-service
+spec:
+  selector:
+    app: client
+  ports:
+  - protocol: TCP 
+    port: 8080
+    targetPort: 3000
+      
